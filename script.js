@@ -1,4 +1,4 @@
-// Sélection des éléments HTML et initialisation des constantes
+// Ajout de la possibilité de démarrer le jeu avec la touche Espace
 const scene = document.querySelector("#scene");
 const score_bar = document.querySelector("#score_bar");
 const startButton = document.querySelector("#button");
@@ -29,6 +29,7 @@ let appuiToucheHaut = false;
 let appuiToucheBas = false;
 let end;
 let gameInterval;
+let vitesseBalle = 7;
 
 let scoreJoueurL = 0;
 let scoreJoueurR = 0;
@@ -38,7 +39,6 @@ function init_round() {
     positionBalleX = sceneWidth / 2 - balleWidth / 2;
     positionBalleY = sceneHeight / 2 - balleHeight / 2;
 
-    const vitesseBalle = 7;
     let angle;
 
     // Génère un angle aléatoire "jouable" compris entre 20° et 50° par rapport à l'horizontale
@@ -89,14 +89,17 @@ function start_round() {
 
     init_round();
 
+    countdownElement.style.visibility = "visible";
+
     // Démarre un compte à rebours de 3 secondes avant le début du round
     const countdownInterval = setInterval(() => {
         countdownElement.innerText = seconds;
-        countdownElement.style.display = "block";
-        if (seconds <= 0) {
+
+        if (seconds < 0) {
             clearInterval(countdownInterval);
             startButton.innerText = "GAME STARTED";
-            countdownElement.style.display = "none";
+            countdownElement.style.visibility = "hidden";
+            countdownElement.innerText = "";
             gameInterval = setInterval(round, 15);
         }
         seconds--;
@@ -108,6 +111,7 @@ function round() {
     mouvement_balle();
     mouvement_barres();
     update_scores();
+    vitesseBalle += 0.001; // Augmente la vitesse de la balle avec le temps
 }
 
 // Fonction de mouvement de la balle avec gestion des collisions
@@ -124,9 +128,8 @@ function mouvement_balle() {
         positionBalleY + balleHeight >= positionbarreLY &&
         positionBalleY <= positionbarreLY + barreLHeight
     ) {
-        // Inverse la direction en X et Y en fonction du point de contact
-        vitesseBalleX = (positionBalleX < positionbarreLX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + (Math.random());
-        vitesseBalleY = (positionBalleY < positionbarreLY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + (Math.random());
+        vitesseBalleX = -vitesseBalleX;
+        vitesseBalleY += (positionBalleY - (positionbarreLY + barreLHeight / 2)) / 10;
     }
 
     // Collisions avec la barre droite (barreR)
@@ -136,13 +139,16 @@ function mouvement_balle() {
         positionBalleY + balleHeight >= positionbarreRY &&
         positionBalleY <= positionbarreRY + barreRHeight
     ) {
-        // Inverse la direction en X et Y en fonction du point de contact
-        vitesseBalleX = (positionBalleX < positionbarreRX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + (Math.random());
-        vitesseBalleY = (positionBalleY < positionbarreRY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + (Math.random());
+        vitesseBalleX = -vitesseBalleX;
+        vitesseBalleY += (positionBalleY - (positionbarreRY + barreRHeight / 2)) / 10;
     }
 
     positionBalleX += vitesseBalleX;
     positionBalleY += vitesseBalleY;
+
+    // Empêche la balle de se bloquer contre les rebords
+    positionBalleX = Math.max(0, Math.min(positionBalleX, sceneWidth - balleWidth));
+    positionBalleY = Math.max(0, Math.min(positionBalleY, sceneHeight - balleHeight));
 
     balle.style.left = positionBalleX + "px";
     balle.style.top = positionBalleY + "px";
@@ -211,6 +217,7 @@ document.addEventListener("keydown", (e) => {
     if (e.code === "ArrowDown") appuiToucheBas = true;
     if (e.code === "KeyW") appuiToucheZ = true;
     if (e.code === "KeyS") appuiToucheS = true;
+    if (e.code === "Space" && !gameInterval && !end) startButton.click();
 });
 
 document.addEventListener("keyup", (e) => {
