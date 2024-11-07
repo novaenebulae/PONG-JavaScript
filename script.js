@@ -125,8 +125,8 @@ function mouvement_balle() {
         positionBalleY <= positionbarreLY + barreLHeight
     ) {
         // Inverse la direction en X et Y en fonction du point de contact
-        vitesseBalleX = (positionBalleX < positionbarreLX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + Math.random() * 3;
-        vitesseBalleY = (positionBalleY < positionbarreLY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + Math.random() * 2;
+        vitesseBalleX = (positionBalleX < positionbarreLX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + (Math.random());
+        vitesseBalleY = (positionBalleY < positionbarreLY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + (Math.random());
     }
 
     // Collisions avec la barre droite (barreR)
@@ -137,8 +137,8 @@ function mouvement_balle() {
         positionBalleY <= positionbarreRY + barreRHeight
     ) {
         // Inverse la direction en X et Y en fonction du point de contact
-        vitesseBalleX = (positionBalleX < positionbarreRX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + Math.random() * 3;
-        vitesseBalleY = (positionBalleY < positionbarreRY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + Math.random() * 2;
+        vitesseBalleX = (positionBalleX < positionbarreRX ? -Math.abs(vitesseBalleX) : Math.abs(vitesseBalleX)) + (Math.random());
+        vitesseBalleY = (positionBalleY < positionbarreRY ? -Math.abs(vitesseBalleY) : Math.abs(vitesseBalleY)) + (Math.random());
     }
 
     positionBalleX += vitesseBalleX;
